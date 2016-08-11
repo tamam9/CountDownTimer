@@ -1,4 +1,4 @@
-package com.arjinmc.countdowntimer;
+package com.arjinmc.countdowntimer.coundown_util;
 
 /**
  * CountDownTimerUtil
