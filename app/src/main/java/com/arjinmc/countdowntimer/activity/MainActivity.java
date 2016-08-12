@@ -2,10 +2,12 @@ package com.arjinmc.countdowntimer.activity;
 
 import android.database.sqlite.SQLiteDatabase;
 import android.databinding.DataBindingUtil;
+import android.graphics.Canvas;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 import com.arjinmc.countdowntimer.R;
@@ -59,16 +61,19 @@ public class MainActivity extends FragmentActivity {
     }
 
     private void init() {
-//        list.add(new MEvents("java", 2012526548));
-//        list.add(new MEvents("java", 2012526548));
-//        list.add(new MEvents("java", 2012526548));
-//        list.add(new MEvents("java", 2012526548));
-//        list.add(new MEvents("java", 2012526548));
 
         MainListAdapter mainListAdapter = new MainListAdapter(loadData(), this);
-        mainActBinding.mainRecyclerview.setLayoutManager(new LinearLayoutManager(this));
-        mainActBinding.mainRecyclerview.setAdapter(mainListAdapter);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        mainActBinding.mainRecyclerview.setLayoutManager(linearLayoutManager);
 
+        mainActBinding.mainRecyclerview.addItemDecoration(new RecyclerView.ItemDecoration() {
+            @Override
+            public void onDraw(Canvas c, RecyclerView parent, RecyclerView.State state) {
+                super.onDraw(c, parent, state);
+
+            }
+        });
+        mainActBinding.mainRecyclerview.setAdapter(mainListAdapter);
 
     }
 

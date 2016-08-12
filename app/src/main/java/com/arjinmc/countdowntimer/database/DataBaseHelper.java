@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.text.method.KeyListener;
 
 import com.arjinmc.countdowntimer.pojo.MussEvent;
 
@@ -142,6 +143,16 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_NAME, "", null);
         db.close();
+    }
+
+    public void updateEvents(int oldId, String name, String limit) {
+        SQLiteDatabase writableDatabase = this.getWritableDatabase();
+//        writableDatabase.execSQL("update " + TABLE_NAME + " set " + KEY_NAME + "=" + name + "," + KEY_LIMIT + "=" + limit + " where " + KEY_ID + "=" + oldId);
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(KEY_NAME, name);
+        contentValues.put(KEY_LIMIT, limit);
+        writableDatabase.update(TABLE_NAME, contentValues, KEY_ID + " = " + oldId, null);
+        writableDatabase.close();
     }
 
 }

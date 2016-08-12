@@ -23,4 +23,9 @@ public class ActivitySwitcher {
         Intent intent = new Intent(mainActivity, AddCountAct.class);
         mainActivity.startActivity(intent);
     }
+
+    public static void editCount(CountAct editCountAct) {
+        Intent intent = new Intent(editCountAct, EditCountAct.class);
+        editCountAct.startActivity(intent);
+    }
 }

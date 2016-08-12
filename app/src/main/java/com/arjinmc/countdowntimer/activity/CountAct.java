@@ -21,6 +21,9 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+
 public class CountAct extends FragmentActivity implements View.OnClickListener {
 
 
@@ -45,17 +48,23 @@ public class CountAct extends FragmentActivity implements View.OnClickListener {
         if (EventBusEv.is(ev, Constant.COUNT_DATA)) {
             mussEvent = (MussEvent) ev.getData();
             service_distination_total = timer_unit * mussEvent.getLimit();
-
+            EventBus.getDefault().removeStickyEvent(ev);
         }
-        EventBus.getDefault().removeAllStickyEvents();
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void getCount(EventBusEv ev) {
+        if (EventBusEv.is(ev, Constant.CLOSE_COUNT_DATA)) {
+            finish();
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.count_act);
         EventBus.getDefault().register(this);
+        ButterKnife.bind(this);
         initTimerStatus();
 
         btnServiceStart = (Button) findViewById(R.id.btn_start2);
@@ -70,6 +79,13 @@ public class CountAct extends FragmentActivity implements View.OnClickListener {
 
         initServiceCountDownTimerStatus();
 
+    }
+
+    @OnClick(R.id.edit)
+    public void edit(View view) {
+
+        EventBus.getDefault().postSticky(new EventBusEv(Constant.COUNT_EDIT_DATA, new MussEvent(mussEvent.getId(), mussEvent.getName(), mussEvent.getCurrentLeftTime(), mussEvent.getLimit(), mussEvent.isRunning())));
+        ActivitySwitcher.editCount(this);
     }
 
     private Handler mHandler = new Handler() {
