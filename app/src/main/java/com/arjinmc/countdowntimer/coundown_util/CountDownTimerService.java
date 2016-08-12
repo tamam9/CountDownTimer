@@ -2,10 +2,13 @@ package com.arjinmc.countdowntimer.coundown_util;
 
 import android.app.Service;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -16,7 +19,7 @@ import java.util.TimerTask;
  */
 public class CountDownTimerService extends Service {
 
-    private static final long timer_unit =1000;
+    private static final long timer_unit = 1000;
     private static long mDistination_total;
     private Timer timer;
     private MyTimerTask timerTask;
@@ -31,16 +34,17 @@ public class CountDownTimerService extends Service {
     private static CountDownTimerListener mCountDownTimerListener;
 
     public static CountDownTimerService getInstance(CountDownTimerListener countDownTimerListener
-            ,long distination_total){
-        if(countDownTimerService==null){
+            , long distination_total) {
+
+        if (countDownTimerService == null) {
             countDownTimerService = new CountDownTimerService();
         }
         setCountDownTimerListener(countDownTimerListener);
         mDistination_total = distination_total;
-        if(timer_couting==0) {
+        if (timer_couting == 0) {
             timer_couting = mDistination_total;
         }
-        return  countDownTimerService;
+        return countDownTimerService;
     }
 
     @Nullable
@@ -57,24 +61,26 @@ public class CountDownTimerService extends Service {
 
     /**
      * get countdowan time
+     *
      * @return
      */
-    public long getCountingTime(){
+    public long getCountingTime() {
         return timer_couting;
     }
 
     /**
      * get current timer status
+     *
      * @return
      */
-    public int getTimerStatus(){
-        return  timerStatus;
+    public int getTimerStatus() {
+        return timerStatus;
     }
 
     /**
      * start
      */
-    public void startCountDown(){
+    public void startCountDown() {
         startTimer();
         timerStatus = CountDownTimerUtil.START;
     }
@@ -82,7 +88,7 @@ public class CountDownTimerService extends Service {
     /**
      * paust
      */
-    public void pauseCountDown(){
+    public void pauseCountDown() {
         timer.cancel();
         timerStatus = CountDownTimerUtil.PASUSE;
     }
@@ -90,15 +96,15 @@ public class CountDownTimerService extends Service {
     /**
      * stop
      */
-    public void stopCountDown(){
-        if(timer!=null){
+    public void stopCountDown() {
+        if (timer != null) {
             timer.cancel();
             initTimerStatus();
             mCountDownTimerListener.onChange();
         }
     }
 
-    public static void  setCountDownTimerListener(CountDownTimerListener countDownTimerListener){
+    public static void setCountDownTimerListener(CountDownTimerListener countDownTimerListener) {
         mCountDownTimerListener = countDownTimerListener;
     }
 
@@ -110,10 +116,10 @@ public class CountDownTimerService extends Service {
 
         @Override
         public void run() {
-            timer_couting -=timer_unit;
+            timer_couting -= timer_unit;
             Log.d("timmer", timer_couting + "");
             mCountDownTimerListener.onChange();
-            if(timer_couting==0){
+            if (timer_couting == 0) {
                 cancel();
                 initTimerStatus();
             }
@@ -123,7 +129,7 @@ public class CountDownTimerService extends Service {
     /**
      * init timer status
      */
-    private void initTimerStatus(){
+    private void initTimerStatus() {
         timer_couting = mDistination_total;
         timerStatus = CountDownTimerUtil.PREPARE;
     }
@@ -131,7 +137,7 @@ public class CountDownTimerService extends Service {
     /**
      * start count down
      */
-    private void startTimer(){
+    private void startTimer() {
         timer = new Timer();
         timerTask = new MyTimerTask();
         timer.scheduleAtFixedRate(timerTask, 0, timer_unit);

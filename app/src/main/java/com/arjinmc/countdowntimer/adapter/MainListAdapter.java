@@ -12,6 +12,7 @@ import com.arjinmc.countdowntimer.activity.ActivitySwitcher;
 import com.arjinmc.countdowntimer.activity.MainActivity;
 import com.arjinmc.countdowntimer.database.DataBaseHelper;
 import com.arjinmc.countdowntimer.pojo.MussEvent;
+import com.arjinmc.countdowntimer.util.CommonUtil;
 import com.arjinmc.countdowntimer.util.Constant;
 import com.arjinmc.countdowntimer.util.EventBusEv;
 
@@ -27,6 +28,7 @@ public class MainListAdapter extends RecyclerView.Adapter<MainListAdapter.ViewHo
 
     private final ArrayList<MussEvent> list;
     private final MainActivity activity;
+    private long timer_unit = 1000;
 
     DataBaseHelper databaseHelper;
 
@@ -51,7 +53,7 @@ public class MainListAdapter extends RecyclerView.Adapter<MainListAdapter.ViewHo
         holder.id.setText(String.valueOf(id));
         holder.name.setText(list.get(position).getName());
         holder.currentLeftTime.setText(String.valueOf(currentLeftTime));
-        holder.limit.setText(String.valueOf(limit));
+        holder.limit.setText(CommonUtil.formateTimer(limit*timer_unit));
         holder.running.setText(String.valueOf(running));
         holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
@@ -72,6 +74,8 @@ public class MainListAdapter extends RecyclerView.Adapter<MainListAdapter.ViewHo
             }
         });
     }
+
+
 
 
     @Override

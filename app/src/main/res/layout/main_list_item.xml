@@ -13,6 +13,7 @@
         android:layout_marginLeft="10dp"
         android:gravity="center_vertical"
         android:layout_weight="1"
+        android:visibility="gone"
         android:orientation="vertical"
         >
 
@@ -54,6 +55,7 @@
         <TextView
             android:id="@+id/running"
             android:layout_width="match_parent"
+            android:visibility="gone"
             android:layout_height="wrap_content"
             />
     </LinearLayout>

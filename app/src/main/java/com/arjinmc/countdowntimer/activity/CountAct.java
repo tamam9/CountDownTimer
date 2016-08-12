@@ -13,6 +13,7 @@ import com.arjinmc.countdowntimer.coundown_util.CountDownTimerService;
 import com.arjinmc.countdowntimer.coundown_util.CountDownTimerUtil;
 import com.arjinmc.countdowntimer.R;
 import com.arjinmc.countdowntimer.pojo.MussEvent;
+import com.arjinmc.countdowntimer.util.CommonUtil;
 import com.arjinmc.countdowntimer.util.Constant;
 import com.arjinmc.countdowntimer.util.EventBusEv;
 
@@ -37,6 +38,39 @@ public class CountAct extends FragmentActivity implements View.OnClickListener {
 
 
     private CountDownTimerService countDownTimerService;
+    private TextView title;
+
+    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
+    public void getData(EventBusEv ev) {
+        if (EventBusEv.is(ev, Constant.COUNT_DATA)) {
+            mussEvent = (MussEvent) ev.getData();
+            service_distination_total = timer_unit * mussEvent.getLimit();
+
+        }
+        EventBus.getDefault().removeAllStickyEvents();
+    }
+
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.count_act);
+        EventBus.getDefault().register(this);
+        initTimerStatus();
+
+        btnServiceStart = (Button) findViewById(R.id.btn_start2);
+        btnServiceStop = (Button) findViewById(R.id.btn_stop2);
+        tvServiceTime = (TextView) findViewById(R.id.tv_time2);
+        title = (TextView) findViewById(R.id.title);
+        title.setText(mussEvent.getName());
+        btnServiceStart.setOnClickListener(this);
+        btnServiceStop.setOnClickListener(this);
+        countDownTimerService = CountDownTimerService.getInstance(new MyCountDownLisener()
+                , service_distination_total);
+
+        initServiceCountDownTimerStatus();
+
+    }
 
     private Handler mHandler = new Handler() {
 
@@ -45,7 +79,7 @@ public class CountAct extends FragmentActivity implements View.OnClickListener {
             super.handleMessage(msg);
             switch (msg.what) {
                 case 2:
-                    tvServiceTime.setText(formateTimer(countDownTimerService.getCountingTime()));
+                    tvServiceTime.setText(CommonUtil.formateTimer(countDownTimerService.getCountingTime()));
                     if (countDownTimerService.getTimerStatus() == CountDownTimerUtil.PREPARE) {
                         btnServiceStart.setText("START");
                     }
@@ -60,36 +94,6 @@ public class CountAct extends FragmentActivity implements View.OnClickListener {
         public void onChange() {
             mHandler.sendEmptyMessage(2);
         }
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.count_act);
-        EventBus.getDefault().register(this);
-        initTimerStatus();
-
-        btnServiceStart = (Button) findViewById(R.id.btn_start2);
-        btnServiceStop = (Button) findViewById(R.id.btn_stop2);
-        tvServiceTime = (TextView) findViewById(R.id.tv_time2);
-
-        btnServiceStart.setOnClickListener(this);
-        btnServiceStop.setOnClickListener(this);
-
-        countDownTimerService = CountDownTimerService.getInstance(new MyCountDownLisener()
-                , service_distination_total);
-        initServiceCountDownTimerStatus();
-
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
-    public void getData(EventBusEv ev) {
-        if (EventBusEv.is(ev, Constant.COUNT_DATA)) {
-            mussEvent = (MussEvent) ev.getData();
-            service_distination_total = timer_unit * mussEvent.getId();
-
-        }
-        EventBus.getDefault().removeAllStickyEvents();
     }
 
     @Override
@@ -125,39 +129,6 @@ public class CountAct extends FragmentActivity implements View.OnClickListener {
         timerStatus = CountDownTimerUtil.PREPARE;
     }
 
-    /**
-     * formate timer shown in textview
-     *
-     * @param time
-     * @return
-     */
-    private String formateTimer(long time) {
-        String str = "00:00:00";
-        int hour = 0;
-        if (time >= 1000 * 3600) {
-            hour = (int) (time / (1000 * 3600));
-            time -= hour * 1000 * 3600;
-        }
-        int minute = 0;
-        if (time >= 1000 * 60) {
-            minute = (int) (time / (1000 * 60));
-            time -= minute * 1000 * 60;
-        }
-        int sec = (int) (time / 1000);
-        str = formateNumber(hour) + ":" + formateNumber(minute) + ":" + formateNumber(sec);
-        return str;
-    }
-
-    /**
-     * formate time number with two numbers auto add 0
-     *
-     * @param time
-     * @return
-     */
-    private String formateNumber(int time) {
-        return String.format("%02d", time);
-    }
-
 
     /**
      * init countdowntimer buttons status for servce
@@ -174,7 +145,7 @@ public class CountAct extends FragmentActivity implements View.OnClickListener {
                 btnServiceStart.setText("RESUME");
                 break;
         }
-        tvServiceTime.setText(formateTimer(countDownTimerService.getCountingTime()));
+        tvServiceTime.setText(CommonUtil.formateTimer(countDownTimerService.getCountingTime()));
 
     }
 
